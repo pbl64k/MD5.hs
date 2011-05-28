@@ -1,0 +1,3 @@
+MD5 message-digest algorithm implementation in Haskell. Slow, clunky,
+naive, pure.
+
