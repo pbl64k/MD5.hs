@@ -1,3 +1,35 @@
 MD5 message-digest algorithm implementation in Haskell. Slow, clunky,
 naive, pure.
 
+MD5.hs is a module exporting a single function:
+
+md5 :: String -> String
+
+...while md5.hs can be compiled with ghc --make, and the resulting binary
+will compute the digest of the stdin, stopping once the EOF is reached.
+
+It's not particularly practical, because:
+
+pbl@vu:~/Sandbox/haskell/MD5$ ghc --make md5.hs
+[1 of 2] Compiling MD5              ( MD5.hs, MD5.o )
+[2 of 2] Compiling Main             ( md5.hs, md5.o )
+Linking md5 ...
+pbl@vu:~/Sandbox/haskell/MD5$ ls -l /bin/busybox
+-rwxr-xr-x 1 root root 1326968 2011-02-23 05:30 /bin/busybox
+pbl@vu:~/Sandbox/haskell/MD5$ time openssl md5 /bin/busybox
+MD5(/bin/busybox)= da0ed5ad08e3b727f6b141882b3eb50b
+
+real    0m0.042s
+user    0m0.012s
+sys     0m0.008s
+pbl@vu:~/Sandbox/haskell/MD5$ time ./md5 </bin/busybox
+da0ed5ad08e3b727f6b141882b3eb50b
+
+real    0m2.123s
+user    0m1.932s
+sys     0m0.012s
+pbl@vu:~/Sandbox/haskell/MD5$ 
+
+Much faster alternatives exist (and in Haskell, too). Primary strategies
+for performance improvement are strict evaluation wherever possible,
+Data.ByteString and perhaps even using FFI for maximum efficiency.
